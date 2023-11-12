@@ -55,6 +55,10 @@ func NewAdminUser(Id int64, Email string, Name string) AdminUser {
 	}
 }
 
+func getAdminUser() AdminUser {
+	return NewAdminUser(1, "arinazabrodina@knu.ua", "Arina Zabrodina")
+}
+
 type Chat struct {
 	Id   int64  `json:"id"`
 	Name string `json:"name"`

@@ -5,16 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cb2bb3d-1f5e-4265-8153-684974ea971e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/mental-support-backend.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/botHandler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/databaseManager.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/init.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/messageNotifier.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/room.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/botHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/botHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/databaseManager.go" beforeDir="false" afterPath="$PROJECT_DIR$/databaseManager.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/models.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +29,8 @@
       <list>
         <option value="Go Application" />
         <option value="Dockerfile" />
+        <option value="HTML File" />
+        <option value="JavaScript File" />
         <option value="Go File" />
       </list>
     </option>
@@ -39,8 +44,11 @@
     <setting file="file://$USER_HOME$/go/pkg/mod/github.com/go-telegram/bot@v0.8.0/bot.go" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/go/pkg/mod/github.com/go-telegram/bot@v0.8.0/examples/echo/main.go" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/go/pkg/mod/github.com/go-telegram/bot@v0.8.0/examples/middleware/main.go" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/go/pkg/mod/github.com/go-telegram/bot@v0.8.0/methods.go" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/go/pkg/mod/github.com/go-telegram/bot@v0.8.0/models/message.go" root0="SKIP_INSPECTION" />
     <setting file="file:///usr/local/go/src/builtin/builtin.go" root0="SKIP_INSPECTION" />
+    <setting file="file:///usr/local/go/src/context/context.go" root0="SKIP_INSPECTION" />
+    <setting file="file:///usr/local/go/src/database/sql/sql.go" root0="SKIP_INSPECTION" />
     <setting file="file:///usr/local/go/src/net/http/header.go" root0="SKIP_INSPECTION" />
     <setting file="file:///usr/local/go/src/runtime/panic.go" root0="SKIP_INSPECTION" />
     <setting file="file:///usr/local/go/src/time/time.go" root0="SKIP_INSPECTION" />
@@ -59,6 +67,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
@@ -116,19 +125,20 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/databaseManager.go</url>
-          <line>172</line>
+          <line>202</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/main.go</url>
-          <line>79</line>
-          <option name="timeStamp" value="18" />
+          <url>file://$PROJECT_DIR$/databaseManager.go</url>
+          <line>112</line>
+          <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="GoApplicationRunConfiguration">
         <watch expression="db" language="go" />
+        <watch expression="tgBot" language="go" />
       </configuration>
     </watches-manager>
   </component>

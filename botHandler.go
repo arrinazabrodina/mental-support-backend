@@ -11,20 +11,56 @@ import (
 	"time"
 )
 
-func startBotHandler() bool {
+var newTgMessage = getTelegramMessageChan()
+
+var tgBot *bot.Bot
+var tgCtx context.Context
+
+func startBotHandler() {
+	go handleNewMessages()
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	tgCtx = ctx
 	defer cancel()
 	opts := []bot.Option{
 		bot.WithDefaultHandler(handler),
 	}
-	//print(os.Getenv("TELEGRAM_API_TOKEN"))
+
 	bot, err := bot.New(os.Getenv("TELEGRAM_API_TOKEN"), opts...)
+	tgBot = bot
 	if err != nil {
 		panic(err)
-		return false
 	}
 	bot.Start(ctx)
-	return true
+}
+
+func handleNewMessages() {
+	print("Entered here")
+	messagesChan := *getWebMessageChan()
+	for {
+		select {
+		case message := <-messagesChan:
+			print("Outputting message:\n")
+			print(message.Message)
+			print("\nFinish outputting message:\n")
+			sendMessage, err := tgBot.SendMessage(tgCtx, &bot.SendMessageParams{
+				ChatID: message.Chat.Id,
+				Text:   message.Message,
+			})
+			if err != nil {
+				continue
+			}
+			var _ Message
+
+			message.Chat = &Chat{
+				Id:   message.Chat.Id,
+				Name: "",
+			}
+			message.MessageId = sendMessage.ID
+			message.Date = time.Unix(int64(sendMessage.Date), 0)
+
+			addMessage(message)
+		}
+	}
 }
 
 func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
@@ -69,7 +105,14 @@ func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		Date:       time.Unix(int64(update.Message.Date), 0),
 	}
 
-	addMessage(message)
+	message = addMessage(message)
+
+	(*newTgMessage) <- message
 	marsh, _ := json.MarshalIndent(message, "", " ")
 	print(string(marsh))
+}
+
+func (message *Message) asData() []byte {
+	data, _ := json.MarshalIndent(message, "", " ")
+	return data
 }

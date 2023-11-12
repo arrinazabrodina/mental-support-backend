@@ -7,11 +7,28 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+	"sync"
+	"text/template"
 	"time"
 )
 
-//var db *sql.DB
+var r *room
+
+type templateHandler struct {
+	once     sync.Once
+	filename string
+	templ    *template.Template
+}
+
+// ServeHTTP handles the HTTP request.
+func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	t.once.Do(func() {
+		t.templ = template.Must(template.ParseFiles(t.filename))
+	})
+	t.templ.Execute(w, r)
+}
 
 func main() {
 
@@ -19,17 +36,20 @@ func main() {
 		return
 	}
 
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Get("/messages", getMessages)
-	//r.Get("/hello", hello)
+	router := chi.NewRouter()
+	router.Use(middleware.Logger)
+	router.Get("/messages", getMessages)
+	router.Get("/room", handleWebhook)
+	router.Get("/chats", getChats)
+	router.Get("/", getTestPage)
+	router.Get("/test", test)
 
+	r = newRoom()
+	go r.run()
 	go startBotHandler()
 
-	servErr := http.ListenAndServe(":3000", r)
-	if servErr != nil {
-		fmt.Printf("Failed to start server: %s\n", servErr)
-		return
+	if err := http.ListenAndServe(":8080", router); err != nil {
+		log.Fatal("ListenAndServe:", err)
 	}
 }
 
@@ -44,6 +64,68 @@ type Pagination struct {
 type Page struct {
 	Objects  interface{} `json:"objects"`
 	Metadata Pagination  `json:"metadata"`
+}
+
+type Test struct {
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	DbName   string `json:"dbName"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+}
+
+func test(w http.ResponseWriter, r *http.Request) {
+	t := Test{}
+
+	t.Host = os.Getenv("DATABASE_HOST")
+	t.Port = os.Getenv("DATABASE_PORT")
+	t.DbName = os.Getenv("DATABASE_NAME")
+	t.User = os.Getenv("DATABASE_USER")
+	t.Password = os.Getenv("DATABASE_PASSWORD")
+	//str := os.Environ()
+
+	json.NewEncoder(w).Encode(t)
+}
+
+func getTestPage(w http.ResponseWriter, r *http.Request) {
+	t := &templateHandler{filename: "chat.html"}
+	t.once.Do(func() {
+		t.templ = template.Must(template.ParseFiles(t.filename))
+	})
+	t.templ.Execute(w, r)
+}
+
+func handleWebhook(w http.ResponseWriter, req *http.Request) {
+	r.ServeHTTP(w, req)
+}
+
+func getChats(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	if r == nil {
+		return
+	}
+
+	rows, err := db.Query("SELECT id, name FROM Chat")
+	if err != nil {
+		makeError(http.StatusInternalServerError, fmt.Sprintf("Unable to chats, error: %s", err), &w)
+		return
+	}
+
+	defer rows.Close()
+
+	chats := []Chat{}
+
+	for rows.Next() {
+		var chat Chat
+
+		if err := rows.Scan(&chat.Id, &chat.Name); err != nil {
+			continue
+		}
+		chats = append(chats, chat)
+	}
+
+	json.NewEncoder(w).Encode(chats)
 }
 
 func getMessages(w http.ResponseWriter, r *http.Request) {

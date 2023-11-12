@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"log"
+	"os"
 )
 
 var db *sql.DB
@@ -16,13 +17,27 @@ func initDb() {
 func initializeDatabase() bool {
 	var err error
 	// TODO: (Zabrodina) get user, password, addr from os
+	//DATABASE_HOST
+	//DATABASE_PORT
+	//DATABASE_NAME
+	//DATABASE_USER
+	//DATABASE_PASSWORD
+	//TELEGRAM_API_TOKEN
 
+	host := os.Getenv("DATABASE_HOST")
+	port := os.Getenv("DATABASE_PORT")
+	addr := fmt.Sprintf("%s:%s", host, port)
+	dbName := os.Getenv("DATABASE_NAME")
+	user := os.Getenv("DATABASE_USER")
+	password := os.Getenv("DATABASE_PASSWORD")
+	//panic("Connecting addr: " + addr)
+	//return true
 	config := mysql.Config{
-		User:   "root",
-		Passwd: "testtest",
+		User:   user,
+		Passwd: password,
 		Net:    "tcp",
-		Addr:   "127.0.0.1:3307",
-		DBName: "mental_health",
+		Addr:   addr,
+		DBName: dbName,
 	}
 	db, err = sql.Open("mysql", config.FormatDSN())
 
@@ -59,18 +74,23 @@ func makeAuthorFromTelegramUser(user TelegramUser) Author {
 	}
 }
 
-func addMessage(message Message) {
+func addMessage(message Message) Message {
 	if message.Author.CategoryId == "user" {
-		addMessageFromTelegram(message)
-		return
+		return addMessageFromTelegram(message)
 	}
-	// TODO: add message from admin
-
+	return addMessageFromWeb(message)
+	//return message
 }
 
-func addMessageFromTelegram(message Message) bool {
+func addMessageFromWeb(message Message) Message {
+	id := createMessage(message)
+	message.Id = int(id)
+	return message
+}
+
+func addMessageFromTelegram(message Message) Message {
 	if message.UserAuthor == nil {
-		return false
+		return message
 	}
 
 	user := *message.UserAuthor
@@ -78,18 +98,19 @@ func addMessageFromTelegram(message Message) bool {
 
 	if message.Chat == nil {
 		log.Printf("Can't add message without chat")
-		return false
+		return message
 	}
 	chat := *message.Chat
 	updateOrCreateChat(chat)
 
-	createMessage(message)
+	id := createMessage(message)
+	message.Id = int(id)
 
-	return true
+	return message
 }
 
-func createMessage(message Message) {
-	_, err := db.Exec("INSERT INTO `Message`(messageId, chatId, message, authorId, authorCategory, date) VALUES (?,?,?,?,?,?);",
+func createMessage(message Message) int64 {
+	result, err := db.Exec("INSERT INTO `Message`(messageId, chatId, message, authorId, authorCategory, date) VALUES (?,?,?,?,?,?);",
 		message.MessageId,
 		message.Chat.Id,
 		message.Message,
@@ -97,9 +118,18 @@ func createMessage(message Message) {
 		message.Author.CategoryId,
 		message.Date,
 	)
+
 	if err != nil {
+		return 0
 		log.Printf("Error while creating message: %s", err)
 	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0
+		//return 0, fmt.Errorf("AddAlbum: %v", err)
+	}
+	return id
 }
 
 func updateOrCreateChat(chat Chat) {
