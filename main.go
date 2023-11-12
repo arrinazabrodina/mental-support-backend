@@ -7,7 +7,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"sync"
 	"text/template"
@@ -41,8 +40,7 @@ func main() {
 	router.Get("/messages", getMessages)
 	router.Get("/room", handleWebhook)
 	router.Get("/chats", getChats)
-	router.Get("/", getTestPage)
-	router.Get("/test", test)
+	//router.Get("/", getTestPage)
 
 	r = newRoom()
 	go r.run()
@@ -74,26 +72,13 @@ type Test struct {
 	Password string `json:"password"`
 }
 
-func test(w http.ResponseWriter, r *http.Request) {
-	t := Test{}
-
-	t.Host = os.Getenv("DATABASE_HOST")
-	t.Port = os.Getenv("DATABASE_PORT")
-	t.DbName = os.Getenv("DATABASE_NAME")
-	t.User = os.Getenv("DATABASE_USER")
-	t.Password = os.Getenv("DATABASE_PASSWORD")
-	//str := os.Environ()
-
-	json.NewEncoder(w).Encode(t)
-}
-
-func getTestPage(w http.ResponseWriter, r *http.Request) {
-	t := &templateHandler{filename: "chat.html"}
-	t.once.Do(func() {
-		t.templ = template.Must(template.ParseFiles(t.filename))
-	})
-	t.templ.Execute(w, r)
-}
+//func getTestPage(w http.ResponseWriter, r *http.Request) {
+//	t := &templateHandler{filename: "chat.html"}
+//	t.once.Do(func() {
+//		t.templ = template.Must(template.ParseFiles(t.filename))
+//	})
+//	t.templ.Execute(w, r)
+//}
 
 func handleWebhook(w http.ResponseWriter, req *http.Request) {
 	r.ServeHTTP(w, req)
