@@ -4,14 +4,12 @@ services:
   mysql:
     image: mysql:8.1
     container_name: mysql-container
-    ports:
-      - "3310:3306"
-      - "33010:33060"
     environment:
       MYSQL_ROOT_PASSWORD: gB5v79wnRS
       MYSQL_DATABASE: mental_health
       MYSQL_USER: manager
       MYSQL_PASSWORD: RGaqrgXG8W
+    command: --init-file /data/application/init.sql
     volumes:
       - ./init.sql:/data/application/init.sql
 

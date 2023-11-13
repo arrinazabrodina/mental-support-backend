@@ -99,7 +99,12 @@ func handleWebhook(w http.ResponseWriter, req *http.Request) {
 	r.ServeHTTP(w, req)
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
 func getChats(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 
 	if r == nil {
@@ -125,10 +130,16 @@ func getChats(w http.ResponseWriter, r *http.Request) {
 		chats = append(chats, chat)
 	}
 
+	//fmt.Printf("Responding this:")
+	//log.Println()
+	println("Responding this:")
+	newChats, _ := json.Marshal(chats)
+	println(string(newChats))
 	json.NewEncoder(w).Encode(chats)
 }
 
 func getMessages(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 
 	if r == nil {

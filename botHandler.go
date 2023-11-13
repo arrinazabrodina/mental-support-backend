@@ -7,7 +7,6 @@ import (
 	"github.com/go-telegram/bot/models"
 	"os"
 	"os/signal"
-	"strconv"
 	"time"
 )
 
@@ -39,9 +38,6 @@ func handleNewMessages() {
 	for {
 		select {
 		case message := <-messagesChan:
-			print("Outputting message:\n")
-			print(message.Message)
-			print("\nFinish outputting message:\n")
 			sendMessage, err := tgBot.SendMessage(tgCtx, &bot.SendMessageParams{
 				ChatID: message.Chat.Id,
 				Text:   message.Message,
@@ -64,10 +60,6 @@ func handleNewMessages() {
 }
 
 func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: update.Message.Chat.ID,
-		Text:   strconv.FormatInt(update.Message.Chat.ID, 10),
-	})
 	if update.Message.From.IsBot {
 		return
 	}

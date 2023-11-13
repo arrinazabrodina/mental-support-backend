@@ -46,11 +46,8 @@ func (r *room) run() {
 			delete(r.clients, client)
 			close(client.receive)
 		case msg := <-r.forward:
-			print(msg)
+			print("Receive message from socket")
 			handleMessageFromWeb(msg)
-			//for client := range r.clients {
-			//	client.receive <- []byte("Here is a string....")
-			//}
 		case message := <-newTgMessages:
 			for client := range r.clients {
 				response := NewMessageResponse{Event: "newMessage", Object: message}
@@ -104,6 +101,9 @@ const (
 var upgrader = &websocket.Upgrader{ReadBufferSize: socketBufferSize, WriteBufferSize: socketBufferSize}
 
 func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
 	socket, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		log.Fatal("ServeHTTP:", err)
