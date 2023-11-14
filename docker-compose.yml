@@ -13,14 +13,14 @@ services:
     volumes:
       - ./init.sql:/data/application/init.sql
 
-  golang-app:
+  backend:
     build:
-      context: .
-    image: mental-health-server
+      context: ./backend/
+    image: mental-health-backend
     restart: always
-    container_name: mental-health-server
+    container_name: mental-health-backend
     ports:
-      - "8080:8080"
+      - "8123:8080"
     depends_on:
       - mysql
     environment:
@@ -30,3 +30,17 @@ services:
       DATABASE_USER: root
       DATABASE_PASSWORD: gB5v79wnRS
       TELEGRAM_API_TOKEN: 6453650751:AAFoZ34iJSHl3J4t8zj6OYidL9dMfDgYoKE
+
+  client:
+    build:
+      context: ./client/
+    image: mental-health-client
+    restart: always
+    container_name: mental-health-client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_HOST: localhost
+      REACT_APP_Port: 8123

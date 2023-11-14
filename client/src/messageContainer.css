@@ -1,0 +1,21 @@
+.message-field {
+  height: 70vh;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  scroll-padding-block: auto;
+}
+
+.load-more {
+  padding: 8px 16px;
+  background-color: #3498db;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: center;
+  margin: 16px 0;
+  transition: background-color 0.3s;
+}
+
+.load-more:hover {
+  background-color: #2980b9;
+}

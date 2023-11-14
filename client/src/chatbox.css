@@ -1,0 +1,44 @@
+/* Style for the form container */
+#chatbox {
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 20px); /* Set width as needed */
+  margin: 10px;
+}
+
+/* Style for the textarea */
+#chatbox textarea {
+  height: 100px; /* Set height as needed */
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical; /* Allow vertical resizing */
+}
+
+/* Style for the submit button */
+#chatbox input[type="submit"] {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff; /* Choose your preferred color */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#chatbox button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: gray; /* Choose your preferred color */
+  color: white;
+  cursor: pointer;
+  margin: 5px 0;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the submit button */
+#chatbox input[type="submit"]:hover {
+  background-color: #0056b3; /* Adjust the color as desired */
+}
